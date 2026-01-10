@@ -12,7 +12,6 @@
 
 <body>
 
-
 <section id="header">
     <a href="#"><img src="images/logo.png" class="logo" alt=""></a>
     <div>
@@ -48,12 +47,9 @@
                 <td>Subtotal</td>
             </tr>
         </thead>
-
-        <!-- 🔥 JS WILL INSERT ITEMS HERE -->
         <tbody id="cart-items"></tbody>
     </table>
 </section>
-
 
 <section id="cart-add" class="section-p1">
 
@@ -84,7 +80,7 @@
 
         <button class="normal">Proceed To Pay</button>
     </div>
-
+</section>
 
 <footer class="section-p1">
     <div class="col">
@@ -140,6 +136,7 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -161,12 +158,13 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
     const options = {
-      key: rzp_test_S26AaPs3nPbeRY,
-     amount: totalAmount * 100, // Razorpay works in paise
+      key: "rzp_test_S26AaPs3nPbeRY",
+      amount: totalAmount * 100,
       currency: "INR",
       name: "SwiftCart",
       description: "Order Payment",
       image: "images/logo.png",
+
       handler: function (response) {
 
         const order = {
@@ -185,11 +183,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         window.location.href = "order.html";
       },
+
       prefill: {
         name: "SwiftCart Customer",
         email: "customer@test.com",
         contact: "9999999999"
       },
+
       theme: {
         color: "#db7093"
       }
@@ -201,9 +201,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 
 </body>
 </html>
