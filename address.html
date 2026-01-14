@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftCart | Cart</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+
+<body>
+
+<section id="header">
+    <a href="#"><img src="images/logo.png" class="logo" alt=""></a>
+    <div>
+        <ul id="navbar">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li>
+                <a class="active" href="cart.html">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="count">0</span>
+                </a>
+            </li>
+            <li>
+  <a href="wishlist.html">
+    <i class="fa-solid fa-heart"></i>
+    <span id="wishlist-count">0</span>
+  </a>
+</li>
+        </ul>
+    </div>
+</section>
+
+<section id="page-header" class="cart-header">
+    <h2>#youradress</h2>
+    <p>DOOR STEP DELIVERY!</p>
+</section>
+
+
+<section class="checkout-container">
+
+  <div class="address-box">
+    <h2>Delivery Address</h2>
+
+    <form id="addressForm" class="address-form">
+
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="text" id="phone" placeholder="Phone Number" required>
+
+      <input type="text" id="street" placeholder="House No, Street, Area" class="full" required>
+
+      <input type="text" id="city" placeholder="City" required>
+      <input type="text" id="state" placeholder="State" required>
+
+      <input type="text" id="pincode" placeholder="Pincode" class="full" required>
+
+    </form>
+
+    <div class="checkout-actions">
+      <button form="addressForm" class="normal">
+        Save Address
+      </button>
+
+      <button id="payBtn" class="normal" disabled>
+        Pay & Place Order
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+const addressForm = document.getElementById("addressForm");
+const payBtn = document.getElementById("payBtn");
+
+/* SAVE ADDRESS */
+addressForm.addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const address = {
+    name: name.value,
+    phone: phone.value,
+    street: street.value,
+    city: city.value,
+    state: state.value,
+    pincode: pincode.value
+  };
+
+  localStorage.setItem("deliveryAddress", JSON.stringify(address));
+  payBtn.disabled = false;
+  alert("Address saved successfully");
+});
+
+/* RAZORPAY PAYMENT */
+payBtn.addEventListener("click", function(){
+
+  const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+  if(cartItems.length === 0) return alert("Cart is empty!");
+
+  const totalAmount = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  const options = {
+    key: "rzp_test_S26AaPs3nPbeRY",
+    amount: totalAmount * 100,
+    currency: "INR",
+    name: "SwiftCart",
+    description: "Order Payment",
+
+    handler: function(response){
+      const orders = JSON.parse(localStorage.getItem("orders")) || [];
+      orders.push({
+        orderId: "ORD" + Date.now(),
+        paymentId: response.razorpay_payment_id,
+        items: cartItems,
+        address: JSON.parse(localStorage.getItem("deliveryAddress")),
+        total: totalAmount,
+        date: new Date().toLocaleString()
+      });
+
+      localStorage.setItem("orders", JSON.stringify(orders));
+      localStorage.removeItem("cart");
+      window.location.href = "orders.html";
+    },
+
+    theme: { color: "#2874f0" }
+  };
+
+  new Razorpay(options).open();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Orders | SwiftCart</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+<body>
+   <section id="header">
+  <a href="#"><img src="images/logo.png" class="logo" alt=""></a>
+
+  <div>
+    <ul id="navbar">
+
+      <li><a class="active" href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html"><i class="fa-solid fa-bag-shopping"></i></a></li>
+
+      
+      <li class="user-account">
+        <i class="fa-solid fa-user" id="userIcon"></i>
+
+      </li> 
+    </ul>
+  </div>
+</section>
+
+<section id="page-header">
+  <h2>#MY ORDERS</h2>
+  <p>Track your recent purchases</p>
+</section>
+
+<section class="section-p1" id="orders-container">
+  
+</section>
+
+<script>
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const container = document.getElementById("orders-container");
+
+  if (orders.length === 0) {
+    container.innerHTML = "<p>No orders placed yet.</p>";
+  } else {
+    orders.reverse().forEach(order => {
+      container.innerHTML += `
+        <div class="order-box">
+          <div class="order-header">
+            <i class="fa-solid fa-box"></i>
+            <div>
+              <h4>Order ID: ${order.id}</h4>
+              <span>${order.date}</span>
+            </div>
+          </div>
+
+          <ul class="order-items">
+            ${order.items.map(item => `
+              <li>
+                <img src="${item.image}" />
+                <span>${item.name} × ${item.quantity}</span>
+                <strong>$${item.price * item.quantity}</strong>
+              </li>
+            `).join("")}
+          </ul>
+
+          <div class="order-footer">
+            <span>Status: <b class="status">Placed</b></span>
+            <span>Total: <b>$${order.total}</b></span>
+          </div>
+        </div>
+      `;
+    });
+  }
+</script>
+
+</body>
+</html>
